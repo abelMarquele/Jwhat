@@ -12,5 +12,12 @@ router.register(r'groups', views.GroupViewSet)
 urlpatterns = [
     # path('', include(router.urls)),
     path('', views.home, name='home'),
+    path('whatsapp-webhook', views.whatsappWebhook, name= 'whatsapp-webhook'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
+
+#Callback URL
+# https://jwhat.herokuapp.com/whatsapp-webhook
+
+#Verify token
+# whatsapp-webhook

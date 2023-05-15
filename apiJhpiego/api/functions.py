@@ -15,6 +15,7 @@ def sendWhatsAppMessage(phoneNumber, messege):
                }
     response = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
     ans = response.json()
+    return ans
 
 
     phoneNumber = "258844680366"
