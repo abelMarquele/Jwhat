@@ -89,7 +89,14 @@ def whatsappWebhook(request):
         token = request.GET.get('hub.verify_token')
         challenge = request.GET.get('hub.challenge')
 
+        print('1. request',request)
+        print('2. VERIFY_TOKEN',VERIFY_TOKEN)
+        print('3. mode',mode)
+        print('4. token',token)
+        print('5. challenge',challenge)
+
         if mode == 'subscribe' and token == VERIFY_TOKEN:
+            print('6. token validado')
             return HttpResponse(challenge, status=200)
         else: 
             return HttpResponse('error', status=403)
@@ -97,6 +104,10 @@ def whatsappWebhook(request):
         
     if request.method == "POST":
         data = json.loads(request.body)
+
+        print('11. request',request)
+        print('22. data',data)
+
         if 'object' in data and 'entry' in data:
             if data['object'] == 'whatsapp_business_account':
                 try:
