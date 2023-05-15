@@ -109,6 +109,7 @@ def whatsappWebhook(request):
         print('22. data',data)
 
         if 'object' in data and 'entry' in data:
+            print('33. dentro do if')
             if data['object'] == 'whatsapp_business_account':
                 try:
                     for entry in data['entry']:
@@ -124,7 +125,10 @@ def whatsappWebhook(request):
                         phoneNumber = "258844680366"
                         message = 'RE: {} was received'.format(text)
                         sendWhatsAppMessage(phoneNumber, message)
+                        print('44. phoneNumber',phoneNumber)
+                        print('55. message',message)
+                        print('66. sendWhatsAppMessage(phoneNumber, message)',sendWhatsAppMessage(phoneNumber, message))
                 except:
                     pass
-
+        print('77. fora de if')
         return HttpResponse('success', status=200)
