@@ -18,10 +18,10 @@ def sendWhatsAppMessage(phoneNumber, messege):
     return ans
 
 
-    phoneNumber = "258844680366"
+    # phoneNumber = "258844680366"
 
-    messege = "Ola Abel, n\ Essa mensagem é de teste"
+    # messege = "Ola Abel, n\ Essa mensagem é de teste"
 
-    sendWhatsAppMessage(phoneNumber, messege)
+    # sendWhatsAppMessage(phoneNumber, messege)
 
 
