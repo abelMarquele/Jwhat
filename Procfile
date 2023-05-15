@@ -1,4 +1,4 @@
-web: gunicorn 'whatsapp_webhook.wsgi'
-release: python manager.py makemigrations --noinput
-release: python manager.py collectstatic --noinput
-release: python manager.py migrate --noinput
+web: gunicorn whatsapp_webhook.wsgi
+release: python manage.py makemigrations --noinput
+release: python manage.py collectstatic --noinput
+release: python manage.py migrate --noinput
