@@ -129,7 +129,14 @@ TIME_ZONE = 'Africa/Johannesburg'
 USE_I18N = True
 
 USE_TZ = True
+#############################
 
+WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
+WHATSAPP_TOKEN = 'Bearer EAACwv64kYI4BAAHEtZAaYzRAzJ3Mwq1RBqdGRgxZBKCJvfFGomZAqa4ptbjdxGRwx27hkZAuPftwaNMIzULnGYaYAV6528PQCT0I6SJTFDRiPbDeoUNMsrQDnF3btkYF4gt5LKnl2rWZBnl5lj6jiY4uoPzkunKZCqNSqDnSQyYmfTWNqL2XpR2BurIrTy874ZBOAqmBmFUHGZA8vDnSusmZC'
+
+
+
+########################
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
