@@ -103,7 +103,6 @@ def whatsappWebhook(request):
 
                         phoneNumber = "258844680366"
                         message = 'RE: {} was received'.format(text)
-                        sendWhatsAppMessage(phoneNumber, message)
                         print('66. sendWhatsAppMessage(phoneNumber, message)',sendWhatsAppMessage(phoneNumber, message))
                 except:
                     pass
