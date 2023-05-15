@@ -123,7 +123,9 @@ def sendWhatsAppMessage(phoneNumber, message):
     }
     response = requests.post(WHATSAPP_URL, headers=headers, json=payload)
     if response.status_code == 200:
-        return "Mensagem enviada com sucesso!"
+        # return "Mensagem enviada com sucesso!"
+        ans = response.json()
+        return ans
     else:
         return "Erro ao enviar mensagem: " + response.text
 
