@@ -83,11 +83,37 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import requests
 
-WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
-WHATSAPP_TOKEN = 'Bearer EAACwv64kYI4BAHaWJwUUzZBMA93EAKO4ygH0N6w2FikZBhRfQcpRG10o6ZBBkUGrj6tzInl1Smtfni8XJSvkjaJ8NzDoKZBYaiCAaoZAlPhtslIKfbedwS2SxdumOIi8HxjSkZC5jCwoIosqhsQLp3tLBtvWfGBgr7VfGcoUrc0BRv1flSdTf2RPgbhk7QgtqbipzyECpOZB30oo653VJNP'
+# WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
+# WHATSAPP_TOKEN = 'Bearer EAACwv64kYI4BAHaWJwUUzZBMA93EAKO4ygH0N6w2FikZBhRfQcpRG10o6ZBBkUGrj6tzInl1Smtfni8XJSvkjaJ8NzDoKZBYaiCAaoZAlPhtslIKfbedwS2SxdumOIi8HxjSkZC5jCwoIosqhsQLp3tLBtvWfGBgr7VfGcoUrc0BRv1flSdTf2RPgbhk7QgtqbipzyECpOZB30oo653VJNP'
+
+# def sendWhatsAppMessage(phoneNumber, message):
+#     headers = {"Authorization": WHATSAPP_TOKEN}
+#     payload = {
+#         "messaging_product": "whatsapp",
+#         "recipient_type": "individual",
+#         "to": phoneNumber,
+#         "type": "text",
+#         "text": {"body": message}
+#     }
+#     response = requests.post(WHATSAPP_URL, headers=headers, json=payload)
+#     if response.status_code == 200:
+#         return "Mensagem enviada com sucesso!"
+#     else:
+#         return "Erro ao enviar mensagem: " + response.text
+
+from django.conf import settings
+import os
+import requests
+from decouple import config
+
 
 def sendWhatsAppMessage(phoneNumber, message):
-    headers = {"Authorization": WHATSAPP_TOKEN}
+    token = config('WHATSAPP_TOKEN', default='')
+
+    if not token:
+        return "Erro: Token de acesso não encontrado."
+
+    headers = {"Authorization": token}
     payload = {
         "messaging_product": "whatsapp",
         "recipient_type": "individual",
@@ -95,7 +121,7 @@ def sendWhatsAppMessage(phoneNumber, message):
         "type": "text",
         "text": {"body": message}
     }
-    response = requests.post(WHATSAPP_URL, headers=headers, json=payload)
+    response = requests.post(settings.WHATSAPP_URL, headers=headers, json=payload)
     if response.status_code == 200:
         return "Mensagem enviada com sucesso!"
     else:
