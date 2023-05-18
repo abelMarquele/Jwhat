@@ -82,7 +82,8 @@ WSGI_APPLICATION = 'whatsapp_webhook.wsgi.application'
 
 #  Isso instrui o Django a confiar nas solicitações originadas de graph.facebook.com, que é o domínio que está fazendo a solicitação para a sua aplicação.
 # Depois de adicionar essa configuração, reinicie o servidor Django e teste novamente. Certifique-se de que você está recebendo as solicitações de webhook do WhatsApp corretamente.
-CSRF_TRUSTED_ORIGINS = ['graph.facebook.com']
+CSRF_TRUSTED_ORIGINS = ['https://graph.facebook.com']
+
 
 
 # Database
