@@ -5,6 +5,7 @@ import requests
 import json
 
 
+
 WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
 
 def sendWhatsAppMessage(phoneNumber, message):
@@ -56,10 +57,9 @@ def handle_menu_choice(phoneNumber, choice):
     ]
     send_menu_message(phoneNumber, secondary_menu_options)
 
-@csrf_exempt
-def atendimento_cliente_view(request):
-    phoneNumber = "258844680366"  # Substitua pelo número de telefone de atendimento
 
+@csrf_exempt
+def whatsappWebhook(request):
     if request.method == 'POST':
         data = json.loads(request.body)
 
@@ -72,10 +72,9 @@ def atendimento_cliente_view(request):
 
                         if text == '0':
                             sendWhatsAppMessage(phoneNumber, "Conversa encerrada. Obrigado!")
-                            return HttpResponse('success', status=200)
-                        elif text in ['1', '2', '3']:
+                        elif text == '1' or text == '2' or text == '3':
                             handle_menu_choice(phoneNumber, text)
-                        elif text == '1. Voltar ao Menu Anterior':
+                        elif text == '9':
                             main_menu_options = [
                                 "1. Abel",
                                 "2. Belito",
@@ -92,12 +91,6 @@ def atendimento_cliente_view(request):
         return HttpResponse('success', status=200)
 
     elif request.method == 'GET':
-        main_menu_options = [
-            "1. Abel",
-            "2. Belito",
-            "3. Marquele",
-            "0. Terminar Conversa"
-        ]
-        send_menu_message(phoneNumber, main_menu_options)
+        return HttpResponse("Webhook configurado com sucesso!")
 
-        return HttpResponse("Bem-vindo ao atendimento ao cliente. Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
+
