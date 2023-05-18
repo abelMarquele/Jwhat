@@ -1,6 +1,5 @@
 from django.http import HttpResponse
 from decouple import config
-from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
@@ -28,39 +27,25 @@ def sendWhatsAppMessage(phoneNumber, message):
         return "Erro ao enviar mensagem: " + response.text
 
 
-def send_menu_message(phoneNumber):
+def send_menu_message(phoneNumber, menu_options):
     menu_title = "MISAU - Menu de Opções"
-    menu_options = [
-        "1. Informática",
-        "2. Matemática",
-        "3. Estatística"
-    ]
     menu_message = "{}\n\n{}".format(menu_title, "\n".join(menu_options))
 
     sendWhatsAppMessage(phoneNumber, menu_message)
 
 
 def whatsapp_menu_view(request):
-    received_message = request.GET.get('message', '')
+    phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar o menu
 
-    options = {
-        '1': 'Informática',
-        '2': 'Matemática',
-        '3': 'Estatística'
-    }
+    main_menu_options = [
+        "1. Abel",
+        "2. Belito",
+        "3. Marquele",
+        "0. Terminar Conversa"
+    ]
+    send_menu_message(phoneNumber, main_menu_options)
 
-    if received_message.lower() == 'menu':
-        phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar o menu
-        send_menu_message(phoneNumber)
-        response_message = "Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente."
-    else:
-        response_message = options.get(received_message, 'Opção inválida. Por favor, selecione uma opção válida.')
-
-        if response_message in options.values():
-            phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar a resposta
-            sendWhatsAppMessage(phoneNumber, response_message)
-
-    return HttpResponse(response_message)
+    return HttpResponse("Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
 
 
 @csrf_exempt
@@ -93,19 +78,27 @@ def whatsappWebhook(request):
                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
 
                         phoneNumber = "258844680366"
-                        if text.lower() == 'menu':
-                            send_menu_message(phoneNumber)
-                            sendWhatsAppMessage(phoneNumber, "Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
-                        else:
-                            options = {
-                                '1': 'Informática',
-                                '2': 'Matemática',
-                                '3': 'Estatística'
-                            }
-                            response_message = options.get(text, 'Opção inválida. Por favor, selecione uma opção válida.')
+                        response_message = ""
 
-                            if response_message in options.values():
-                                sendWhatsAppMessage(phoneNumber, response_message)
+                        if text == '1':
+                            response_message = "Informática"
+                        elif text == '2':
+                            response_message = "Matemática"
+                        elif text == '3':
+                            response_message = "Estatística"
+                        elif text == '0':
+                            sendWhatsAppMessage(phoneNumber, "Você terminou a conversa. Obrigado!")
+                            return HttpResponse('success', status=200)
+                        else:
+                            response_message = "Opção inválida. Por favor, escolha uma opção válida."
+
+                        sendWhatsAppMessage(phoneNumber, response_message)
+
+                        secondary_menu_options = [
+                            "1. Voltar ao Menu Anterior",
+                            "0. Terminar Conversa"
+                        ]
+                        send_menu_message(phoneNumber, secondary_menu_options)
                 except:
                     pass
 
