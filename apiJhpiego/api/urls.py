@@ -13,7 +13,7 @@ router.register(r'groups', GroupViewSet)
 urlpatterns = [
     # path('', include(router.urls)),
     path('', home, name='home'),
-    path('whatsapp-webhook', views.atendimento_cliente_view, name= 'whatsapp-webhook'),
+    path('whatsapp-webhook', views.whatsappWebhook, name= 'whatsapp-webhook'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
