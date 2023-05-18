@@ -1,5 +1,6 @@
 from django.http import HttpResponse
 from decouple import config
+from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
