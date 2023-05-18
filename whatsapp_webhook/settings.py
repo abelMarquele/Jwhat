@@ -61,6 +61,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'whatsapp_webhook.urls'
 
+
+
+# O erro que você está enfrentando indica que a solicitação POST foi feita para uma URL que não termina com uma barra /, enquanto a configuração APPEND_SLASH está definida como True no seu projeto Django. Isso significa que o Django não pode redirecionar automaticamente para a URL com uma barra final e manter os dados da solicitação POST.
+APPEND_SLASH = False
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
