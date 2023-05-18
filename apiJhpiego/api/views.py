@@ -4,24 +4,29 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
-WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages/'
 
-def send_message(phone_number, message):
-    # token = 'SEU_TOKEN_AQUI'  # Substitua pelo seu token de acesso do WhatsApp
+def send_message(phoneNumber, message):
+    base_url = 'https://graph.facebook.com/v16.0/103297242770340/messages/'
     token = config('WHATSAPP_TOKEN', default='')
-    headers = {"Authorization": token}
-    payload = {
-        "messaging_product": "whatsapp",
-        "recipient_type": "individual",
-        "to": phone_number,
-        "type": "text",
-        "text": {"body": message}
+
+    if not token:
+        return "Erro: Token de acesso não encontrado."
+
+    headers = {
+        'Content-Type': 'application/json',
     }
-    response = requests.post(WHATSAPP_URL, headers=headers, json=payload)
-    
-    if response.status_code == 200:
-        ans = response.json()
-        return ans
+    data = {
+        'phone': phoneNumber,
+        'body': message,
+    }
+    params = {
+        'token': token,
+    }
+    url = base_url + 'sendMessage'
+    response = requests.post(url, headers=headers, params=params, json=data)
+
+    if response.status_code == 201:
+        return "Mensagem enviada com sucesso."
     else:
         return "Erro ao enviar mensagem: " + response.text
 
