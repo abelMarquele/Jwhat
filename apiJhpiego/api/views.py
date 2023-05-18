@@ -4,7 +4,7 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
-WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
+WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages/'
 
 def send_message(phone_number, message):
     # token = 'SEU_TOKEN_AQUI'  # Substitua pelo seu token de acesso do WhatsApp
