@@ -56,7 +56,7 @@ def handle_menu_choice(phoneNumber, choice):
     ]
     send_menu_message(phoneNumber, secondary_menu_options)
 
-
+@csrf_exempt
 def atendimento_cliente_view(request):
     phoneNumber = "258844680366"  # Substitua pelo número de telefone de atendimento
 
