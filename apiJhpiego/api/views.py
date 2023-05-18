@@ -88,3 +88,7 @@ def whatsappWebhook(request):
 
     elif request.method == 'GET':
         return HttpResponse("Webhook configurado com sucesso!")
+
+def home(request):
+    if request.method == 'GET':
+        return HttpResponse("Bem-vindo ao MISAU - API do WhatsApp Business")
