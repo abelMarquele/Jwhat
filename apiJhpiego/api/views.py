@@ -5,7 +5,6 @@ import requests
 import json
 
 
-
 WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
 
 def sendWhatsAppMessage(phoneNumber, message):
@@ -37,21 +36,7 @@ def send_menu_message(phoneNumber, menu_options):
     sendWhatsAppMessage(phoneNumber, menu_message)
 
 
-def whatsapp_menu_view(request):
-    phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar o menu
-
-    main_menu_options = [
-        "1. Abel",
-        "2. Belito",
-        "3. Marquele",
-        "0. Terminar Conversa"
-    ]
-    send_menu_message(phoneNumber, main_menu_options)
-
-    return HttpResponse("Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
-
-
-def process_menu_choice(phoneNumber, choice):
+def handle_menu_choice(phoneNumber, choice):
     response_message = ""
 
     if choice == '1':
@@ -93,21 +78,13 @@ def whatsappWebhook(request):
                 try:
                     for entry in data['entry']:
                         phoneNumber = entry['changes'][0]['value']['metadata']['display_phone_number']
-                        phoneId = entry['changes'][0]['value']['metadata']['phone_number_id']
-                        profileName = entry['changes'][0]['value']['contacts'][0]['profile']['name']
-                        whatsAppId = entry['changes'][0]['value']['contacts'][0]['wa_id']
-                        fromId = entry['changes'][0]['value']['messages'][0]['from']
-                        messageId = entry['changes'][0]['value']['messages'][0]['id']
-                        timestamp = entry['changes'][0]['value']['messages'][0]['timestamp']
                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
-
-                        phoneNumber = "258844680366"
 
                         if text == '0':
                             sendWhatsAppMessage(phoneNumber, "Conversa encerrada. Obrigado!")
                             return HttpResponse('success', status=200)
                         elif text in ['1', '2', '3']:
-                            process_menu_choice(phoneNumber, text)
+                            handle_menu_choice(phoneNumber, text)
                         elif text == '1. Voltar ao Menu Anterior':
                             main_menu_options = [
                                 "1. Abel",
@@ -123,4 +100,19 @@ def whatsappWebhook(request):
                     pass
 
         return HttpResponse('success', status=200)
+
+
+def atendimento_cliente_view(request):
+    phoneNumber = "258844680366"  # Substitua pelo número de telefone de atendimento
+
+    main_menu_options = [
+        "1. Abel",
+        "2. Belito",
+        "3. Marquele",
+        "0. Terminar Conversa"
+    ]
+    send_menu_message(phoneNumber, main_menu_options)
+
+    return HttpResponse("Bem-vindo ao atendimento ao cliente. Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
+
 
