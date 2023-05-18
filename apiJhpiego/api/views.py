@@ -57,20 +57,10 @@ def handle_menu_choice(phoneNumber, choice):
     send_menu_message(phoneNumber, secondary_menu_options)
 
 
-@csrf_exempt
-def whatsappWebhook(request):
-    if request.method == 'GET':
-        VERIFY_TOKEN = 'whatsapp-webhook'
-        mode = request.GET.get('hub.mode')
-        token = request.GET.get('hub.verify_token')
-        challenge = request.GET.get('hub.challenge')
+def atendimento_cliente_view(request):
+    phoneNumber = "258844680366"  # Substitua pelo número de telefone de atendimento
 
-        if mode == 'subscribe' and token == VERIFY_TOKEN:
-            return HttpResponse(challenge, status=200)
-        else:
-            return HttpResponse('error', status=403)
-
-    if request.method == "POST":
+    if request.method == 'POST':
         data = json.loads(request.body)
 
         if 'object' in data and 'entry' in data:
@@ -101,18 +91,13 @@ def whatsappWebhook(request):
 
         return HttpResponse('success', status=200)
 
+    elif request.method == 'GET':
+        main_menu_options = [
+            "1. Abel",
+            "2. Belito",
+            "3. Marquele",
+            "0. Terminar Conversa"
+        ]
+        send_menu_message(phoneNumber, main_menu_options)
 
-def atendimento_cliente_view(request):
-    phoneNumber = "258844680366"  # Substitua pelo número de telefone de atendimento
-
-    main_menu_options = [
-        "1. Abel",
-        "2. Belito",
-        "3. Marquele",
-        "0. Terminar Conversa"
-    ]
-    send_menu_message(phoneNumber, main_menu_options)
-
-    return HttpResponse("Bem-vindo ao atendimento ao cliente. Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
-
-
+        return HttpResponse("Bem-vindo ao atendimento ao cliente. Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
