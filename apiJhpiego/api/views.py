@@ -1,46 +1,11 @@
-
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from rest_framework import permissions
-from apiJhpiego.api.serializers import UserSerializer, GroupSerializer
-from django.shortcuts import render
-
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-def home(request):
-    return render(request, 'index.html',{})
-
-
-
-import json
-from django.http import HttpResponse, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-
-
-
-from django.conf import settings
-import os
-import requests
+from django.http import HttpResponse
 from decouple import config
+from django.views.decorators.csrf import csrf_exempt
+import requests
+import json
 
 WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
+
 def sendWhatsAppMessage(phoneNumber, message):
     token = config('WHATSAPP_TOKEN', default='')
 
@@ -63,11 +28,39 @@ def sendWhatsAppMessage(phoneNumber, message):
         return "Erro ao enviar mensagem: " + response.text
 
 
-# Exemplo de uso:
-# phoneNumber = "258844680366"
-# message = "Olá! Esta é uma mensagem de teste."
-# result = sendWhatsAppMessage(phoneNumber, message)
-# print(result)
+def send_menu_message(phoneNumber):
+    menu_title = "MISAU - Menu de Opções"
+    menu_options = [
+        "1. Informática",
+        "2. Matemática",
+        "3. Estatística"
+    ]
+    menu_message = "{}\n\n{}".format(menu_title, "\n".join(menu_options))
+
+    sendWhatsAppMessage(phoneNumber, menu_message)
+
+
+def whatsapp_menu_view(request):
+    received_message = request.GET.get('message', '')
+
+    options = {
+        '1': 'Informática',
+        '2': 'Matemática',
+        '3': 'Estatística'
+    }
+
+    if received_message.lower() == 'menu':
+        phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar o menu
+        send_menu_message(phoneNumber)
+        response_message = "Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente."
+    else:
+        response_message = options.get(received_message, 'Opção inválida. Por favor, selecione uma opção válida.')
+
+        if response_message in options.values():
+            phoneNumber = "258844680366"  # Substitua pelo número de telefone para o qual deseja enviar a resposta
+            sendWhatsAppMessage(phoneNumber, response_message)
+
+    return HttpResponse(response_message)
 
 
 @csrf_exempt
@@ -80,15 +73,13 @@ def whatsappWebhook(request):
 
         if mode == 'subscribe' and token == VERIFY_TOKEN:
             return HttpResponse(challenge, status=200)
-        else: 
+        else:
             return HttpResponse('error', status=403)
- 
-        
+
     if request.method == "POST":
         data = json.loads(request.body)
 
         if 'object' in data and 'entry' in data:
-            # print('33. dentro do if')
             if data['object'] == 'whatsapp_business_account':
                 try:
                     for entry in data['entry']:
@@ -102,9 +93,20 @@ def whatsappWebhook(request):
                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
 
                         phoneNumber = "258844680366"
-                        message = 'RE: {} was received'.format(text)
-                        print('66. sendWhatsAppMessage(phoneNumber, message)',sendWhatsAppMessage(phoneNumber, message))
+                        if text.lower() == 'menu':
+                            send_menu_message(phoneNumber)
+                            sendWhatsAppMessage(phoneNumber, "Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
+                        else:
+                            options = {
+                                '1': 'Informática',
+                                '2': 'Matemática',
+                                '3': 'Estatística'
+                            }
+                            response_message = options.get(text, 'Opção inválida. Por favor, selecione uma opção válida.')
+
+                            if response_message in options.values():
+                                sendWhatsAppMessage(phoneNumber, response_message)
                 except:
                     pass
-        # print('77. fora de if')
+
         return HttpResponse('success', status=200)
