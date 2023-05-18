@@ -4,6 +4,8 @@ from django.views.decorators.csrf import csrf_exempt
 import requests
 import json
 
+
+
 WHATSAPP_URL = 'https://graph.facebook.com/v16.0/103297242770340/messages'
 
 def sendWhatsAppMessage(phoneNumber, message):
@@ -49,6 +51,27 @@ def whatsapp_menu_view(request):
     return HttpResponse("Um menu de opções foi enviado para você. Por favor, escolha uma opção digitando o número correspondente.")
 
 
+def process_menu_choice(phoneNumber, choice):
+    response_message = ""
+
+    if choice == '1':
+        response_message = "Informática"
+    elif choice == '2':
+        response_message = "Matemática"
+    elif choice == '3':
+        response_message = "Estatística"
+    else:
+        response_message = "Opção inválida. Por favor, escolha uma opção válida."
+
+    sendWhatsAppMessage(phoneNumber, response_message)
+
+    secondary_menu_options = [
+        "1. Voltar ao Menu Anterior",
+        "0. Terminar Conversa"
+    ]
+    send_menu_message(phoneNumber, secondary_menu_options)
+
+
 @csrf_exempt
 def whatsappWebhook(request):
     if request.method == 'GET':
@@ -79,28 +102,25 @@ def whatsappWebhook(request):
                         text = entry['changes'][0]['value']['messages'][0]['text']['body']
 
                         phoneNumber = "258844680366"
-                        response_message = ""
 
-                        if text == '1':
-                            response_message = "Informática"
-                        elif text == '2':
-                            response_message = "Matemática"
-                        elif text == '3':
-                            response_message = "Estatística"
-                        elif text == '0':
-                            sendWhatsAppMessage(phoneNumber, "Você terminou a conversa. Obrigado!")
+                        if text == '0':
+                            sendWhatsAppMessage(phoneNumber, "Conversa encerrada. Obrigado!")
                             return HttpResponse('success', status=200)
+                        elif text in ['1', '2', '3']:
+                            process_menu_choice(phoneNumber, text)
+                        elif text == '1. Voltar ao Menu Anterior':
+                            main_menu_options = [
+                                "1. Abel",
+                                "2. Belito",
+                                "3. Marquele",
+                                "0. Terminar Conversa"
+                            ]
+                            send_menu_message(phoneNumber, main_menu_options)
                         else:
-                            response_message = "Opção inválida. Por favor, escolha uma opção válida."
+                            sendWhatsAppMessage(phoneNumber, "Opção inválida. Por favor, escolha uma opção válida.")
 
-                        sendWhatsAppMessage(phoneNumber, response_message)
-
-                        secondary_menu_options = [
-                            "1. Voltar ao Menu Anterior",
-                            "0. Terminar Conversa"
-                        ]
-                        send_menu_message(phoneNumber, secondary_menu_options)
                 except:
                     pass
 
         return HttpResponse('success', status=200)
+
